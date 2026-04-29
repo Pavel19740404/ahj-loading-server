@@ -1,7 +1,6 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const cors = require('koa-cors');
-const slow = require('koa-slow');
 
 const app = new Koa();
 const router = new Router();
@@ -41,8 +40,11 @@ const news = [
 
 app.use(cors());
 
-// Эмуляция задержки 2-3 секунды
-app.use(slow({ delay: 2000 }));
+// Эмуляция задержки 2 секунды
+app.use(async (ctx, next) => {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await next();
+});
 
 router.get('/api/news', (ctx) => {
   ctx.body = news;
